@@ -78,7 +78,7 @@ class OneLayerNN:
             p = np.random.permutation(len(X))
             X = X[p]
             Y = Y[p]
-            for i in range(len(Y)-1):
+            for i in range(len(Y)):
                 X_b = X[i]
                 Y_b = Y[i]
                 self.forward_pass(X_b)
@@ -94,7 +94,7 @@ class OneLayerNN:
         :param x: 1D Numpy array, representing one example
         :return: None
         '''
-        self.o = np.dot(self.w, x)
+        self.o = np.dot(x, self.w)
 
     def backward_pass(self, x, Y):
         '''
@@ -107,9 +107,9 @@ class OneLayerNN:
         # TODO: Calculate the gradient of the weights
 
         # TODO: Update the weights using the gradient
-        d_loss = np.zeros(self.w.shape)
-        d_loss += (sigmoid(np.dot(self.w, x))-Y)*x
-        self.w = self.w - (self.learning_rate*d_loss)
+        dl_dz = (sigmoid(np.dot(x, self.w))-Y)*sigmoid_derivative(np.dot(x, self.w))
+        d_loss = np.dot(np.transpose(x), dl_dz)
+        self.w = self.w - self.learning_rate*d_loss
 
     def loss(self, X, Y):
         '''
