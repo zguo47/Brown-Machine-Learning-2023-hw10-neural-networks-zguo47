@@ -36,7 +36,7 @@ def test_models(dataset, test_size=0.2):
     #### 1-Layer NN ######
     print('----- 1-Layer NN -----')
     nnmodel = OneLayerNN()
-    nnmodel.train(X_train_b, Y_train, print_loss=False)
+    nnmodel.train(X_train_b, Y_train, print_loss=True)
     print('Average Training Loss:', nnmodel.average_loss(X_train_b, Y_train))
     print('Average Testing Loss:', nnmodel.average_loss(X_test_b, Y_test))
 

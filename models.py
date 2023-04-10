@@ -10,7 +10,7 @@ def l2_loss(predictions, Y):
     :return: L2 loss using predictions for Y.
     '''
     # TODO: implement the squared error loss function
-    pass
+    return np.sum((predictions - Y)**2)
 
 
 def sigmoid(a):
@@ -29,7 +29,7 @@ def sigmoid_derivative(a):
     :return: derivative of sigmoid evaluated at a (applied element-wise if it is an array)
     '''
     # TODO: implement the first derivative of the sigmoid function
-    pass
+    return sigmoid(a)*(1-sigmoid(a))
 
 
 class OneLayerNN:
@@ -71,10 +71,22 @@ class OneLayerNN:
         # (This is equivalent to using a batch size of one.)
 
         # TODO: Perform the forward and backward pass on the current example
+        self.w = np.random.uniform(0, 1, X.shape[1])
+        epoch = 0
+        for e in range(self.epochs):
+            epoch = e
+            p = np.random.permutation(len(X))
+            X = X[p]
+            Y = Y[p]
+            for i in range(len(Y)-1):
+                X_b = X[i]
+                Y_b = Y[i]
+                self.forward_pass(X_b)
+                self.backward_pass(X_b, Y_b)
 
         # Print the loss after every epoch
-        if print_loss:
-            print('Epoch: {} | Loss: {}'.format(epoch, self.loss(X, Y)))
+            if print_loss:
+                print('Epoch: {} | Loss: {}'.format(epoch, self.loss(X, Y)))
 
     def forward_pass(self, x):
         '''
@@ -82,8 +94,7 @@ class OneLayerNN:
         :param x: 1D Numpy array, representing one example
         :return: None
         '''
-        # TODO: Calculate output of neural network on x
-        pass
+        self.o = np.dot(self.w, x)
 
     def backward_pass(self, x, Y):
         '''
@@ -96,7 +107,9 @@ class OneLayerNN:
         # TODO: Calculate the gradient of the weights
 
         # TODO: Update the weights using the gradient
-        pass
+        d_loss = np.zeros(self.w.shape)
+        d_loss += (sigmoid(np.dot(self.w, x))-Y)*x
+        self.w = self.w - (self.learning_rate*d_loss)
 
     def loss(self, X, Y):
         '''
