@@ -194,9 +194,25 @@ class TwoLayerNN:
         # HINT: for best performance initialize weights with np.random.normal or np.random.uniform
 
         # TODO: Weight and bias initialization
+        self.W01 = np.random.uniform(0, 1, (self.hidden_size, X.shape[1]))
+        self.W12 = np.random.uniform(0, 1, (1, self.hidden_size))
+        self.b1 = np.random.uniform(0, 1, self.hidden_size)
+        self.b2 = np.random.uniform(0, 1, 1)
 
         # TODO: Train network for certain number of epochs
         # TODO: Use a variable called epoch to denote the current epoch's number
+        epoch = 0
+        for e in range(self.epochs):
+            epoch = e
+            p = np.random.permutation(len(X))
+            X = X[p]
+            Y = Y[p]
+            for i in range(len(Y)):
+                X_b = X[i]
+                Y_b = Y[i]
+                self.forward_pass(X_b)
+                self.backward_pass(X_b, Y_b)
+
         
         # TODO: Shuffle the examples (X) and labels (Y)
 
@@ -206,8 +222,8 @@ class TwoLayerNN:
         # TODO: Perform the forward and backward pass on the current example
 
         # Print the loss after every epoch
-        if print_loss:
-            print('Epoch: {} | Loss: {}'.format(epoch, self.loss(X, Y)))
+            if print_loss:
+                print('Epoch: {} | Loss: {}'.format(epoch, self.loss(X, Y)))
 
 
     def forward_pass(self, x):
@@ -219,7 +235,10 @@ class TwoLayerNN:
         :return: None
         '''
         # TODO: Calculate output of neural network on X
-        pass
+        self.a1 = self.W01 @ x + self.b1
+        self.o1 = self.activation(self.a1)
+        self.a2 = self.W12 @ self.o1 + self.b2
+        self.o2 = self.W12 @ self.o1 + self.b2
 
         
     def backprop(self, x, y):
@@ -232,7 +251,14 @@ class TwoLayerNN:
         '''
         # TODO: Implement backpropagation
         # Hint: Use the values computed and saved in self.forward_pass
-        pass
+        delta_2 = 2*(self.o2 - y)
+        delta_1 = np.dot(np.transpose(self.W12), delta_2)@self.activation_derivative(self.a1)
+        W12_grad = np.outer(delta_2, self.o1)
+        b2_grad = delta_2
+        W01_grad = np.outer(delta_1, x)
+        b1_grad = delta_1
+
+        return W12_grad, b2_grad, W01_grad, b1_grad
 
     def backward_pass(self, x, y):
         '''
@@ -246,7 +272,11 @@ class TwoLayerNN:
         # TODO: Compute the gradients for the model's weights by calling self.backprop
 
         # TODO: Update the weights using gradient descent
-        pass
+        W12_grad, b2_grad, W01_grad, b1_grad = self.backprop(x, y)
+        self.W01 = self.W01 - self.learning_rate*W01_grad
+        self.b1 = self.b1 - self.learning_rate*b1_grad
+        self.W12 = self.W12 - self.learning_rate*W12_grad
+        self.b2 = self.b2 - self.learning_rate*b2_grad
 
 
     def loss(self, X, Y):
