@@ -194,10 +194,10 @@ class TwoLayerNN:
         # HINT: for best performance initialize weights with np.random.normal or np.random.uniform
 
         # TODO: Weight and bias initialization
-        self.W01 = np.random.uniform(0, 1, (self.hidden_size, X.shape[1]))
-        self.W12 = np.random.uniform(0, 1, (1, self.hidden_size))
-        self.b1 = np.random.uniform(0, 1, self.hidden_size)
-        self.b2 = np.random.uniform(0, 1, 1)
+        self.W01 = np.random.normal(0, np.sqrt(2/(self.hidden_size)), (self.hidden_size, X.shape[1]))
+        self.W12 = np.random.uniform(0, np.sqrt(2/1), (1, self.hidden_size))
+        self.b1 = np.random.uniform(0, np.sqrt(2/(self.hidden_size)), self.hidden_size)
+        self.b2 = np.random.uniform(0, np.sqrt(2/1), 1)
 
         # TODO: Train network for certain number of epochs
         # TODO: Use a variable called epoch to denote the current epoch's number
@@ -252,7 +252,7 @@ class TwoLayerNN:
         # TODO: Implement backpropagation
         # Hint: Use the values computed and saved in self.forward_pass
         delta_2 = 2*(self.o2 - y)
-        delta_1 = np.dot(np.transpose(self.W12), delta_2)@self.activation_derivative(self.a1)
+        delta_1 = np.dot(self.W12.T, delta_2) * self.activation_derivative(self.a1)
         W12_grad = np.outer(delta_2, self.o1)
         b2_grad = delta_2
         W01_grad = np.outer(delta_1, x)
