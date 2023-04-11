@@ -107,8 +107,7 @@ class OneLayerNN:
         # TODO: Calculate the gradient of the weights
 
         # TODO: Update the weights using the gradient
-        dl_dz = (sigmoid(np.dot(x, self.w))-Y)*sigmoid_derivative(np.dot(x, self.w))
-        d_loss = np.dot(np.transpose(x), dl_dz)
+        d_loss = (self.o - Y)*x
         self.w = self.w - self.learning_rate*d_loss
 
     def loss(self, X, Y):
